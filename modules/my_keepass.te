@@ -1,0 +1,74 @@
+policy_module(keepass_t,1.0.0);
+
+
+require {
+	type xdg_config_home_t;
+	type xdg_data_home_t;
+}
+
+########################################
+#
+# Declarations
+#
+
+type keepass_t;
+type keepass_exec_t;
+userdom_user_application_domain(keepass_t, keepass_exec_t)
+
+type keepass_tmp_t;
+userdom_user_tmp_file(keepass_tmp_t)
+
+type keepass_tmpfs_t;
+userdom_user_tmpfs_file(keepass_tmpfs_t)
+
+type keepass_home_t;
+userdom_user_home_content(keepass_home_t)
+
+
+attribute_role keepass_roles;
+role keepass_roles types keepass_t;
+
+########################################
+#
+# Local policy
+#
+
+xserver_user_x_domain_template(keepass, keepass_t, keepass_tmpfs_t)
+
+dev_read_urand(keepass_t)
+
+manage_files_pattern(keepass_t, keepass_home_t, keepass_home_t)
+manage_dirs_pattern(keepass_t, keepass_home_t, keepass_home_t)
+userdom_user_home_dir_filetrans(keepass_t, keepass_home_t, dir, ".keepass")
+xdg_config_home_filetrans(keepass_t, keepass_home_t, dir, "keepassx")
+
+manage_files_pattern(keepass_t, keepass_tmp_t, keepass_tmp_t)
+manage_dirs_pattern(keepass_t, keepass_tmp_t, keepass_tmp_t)
+files_tmp_filetrans(keepass_t, keepass_tmp_t, { file dir })
+
+manage_files_pattern(keepass_t, keepass_tmpfs_t, keepass_tmpfs_t)
+manage_lnk_files_pattern(keepass_t, keepass_tmpfs_t, keepass_tmpfs_t)
+manage_fifo_files_pattern(keepass_t, keepass_tmpfs_t, keepass_tmpfs_t)
+manage_sock_files_pattern(keepass_t, keepass_tmpfs_t, keepass_tmpfs_t)
+fs_tmpfs_filetrans(keepass_t, keepass_tmpfs_t, { file lnk_file sock_file fifo_file })
+
+files_read_usr_files(keepass_t)
+miscfiles_read_localization(keepass_t)
+corecmd_search_bin(keepass_t)
+
+########################################
+#
+# Don't audit
+#
+
+files_dontaudit_list_mnt(keepass_t)
+fs_dontaudit_getattr_all_fs(keepass_t)
+userdom_dontaudit_search_user_home_content(keepass_t)
+xserver_dontaudit_write_log(keepass_t)
+
+dontaudit xserver_t keepass_t:dir search;
+dontaudit xserver_t keepass_t:file { read open };
+dontaudit keepass_t self:fifo_file write;
+dontaudit keepass_t xauth_home_t:file write;
+dontaudit keepass_t xdg_config_home_t:file { read getattr create };
+dontaudit keepass_t xdg_data_home_t:dir search;

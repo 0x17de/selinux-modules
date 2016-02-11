@@ -1,0 +1,27 @@
+########################################
+## <summary>
+##      Role access for keepass.
+## </summary>
+## <param name="role">
+##      <summary>
+##      Role allowed access.
+##      </summary>
+## </param>
+## <param name="domain">
+##      <summary>
+##      User domain for the role.
+##      </summary>
+## </param>
+#
+interface(`keepass_role',`
+        gen_require(`
+                attribute_role keepass_roles;
+                type keepass_exec_t, keepass_t;
+        ')
+
+        roleattribute $1 keepass_roles;
+        domtrans_pattern($2, keepass_exec_t, keepass_t)
+
+	dontaudit keepass_t $2:fifo_file read;
+')
+

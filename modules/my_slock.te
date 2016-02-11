@@ -1,0 +1,34 @@
+policy_module(my_slock,1.0.0);
+
+########################################
+#
+# Declarations
+#
+
+type slock_t;
+type slock_exec_t;
+attribute_role slock_roles;
+userdom_user_application_domain(slock_t, slock_exec_t)
+role slock_roles types slock_t;
+
+type slock_tmpfs_t;
+userdom_user_tmpfs_file(slock_tmpfs_t)
+
+########################################
+#
+# Local policy
+#
+
+allow slock_t self:capability { dac_override sys_resource };
+
+userdom_use_user_terminals(slock_t)
+
+auth_use_nsswitch(slock_t)
+auth_read_shadow(slock_t)
+
+files_read_usr_files(slock_t)
+miscfiles_read_localization(slock_t)
+
+userdom_read_user_home_content_files(slock_t)
+
+xserver_user_x_domain_template(slock, slock_t, slock_tmpfs_t)

@@ -1,0 +1,4 @@
+/usr/bin/keepassx		--	gen_context(system_u:object_r:keepass_exec_t,s0)
+HOME_DIR/\.keepass(/.*)?		gen_context(system_u:object_r:keepass_home_t,s0)
+HOME_DIR/\.config/keepassx(/.*)?		gen_context(system_u:object_r:keepass_home_t,s0)
+

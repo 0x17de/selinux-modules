@@ -1,0 +1,27 @@
+########################################
+## <summary>
+##      Role access for slock.
+## </summary>
+## <param name="role">
+##      <summary>
+##      Role allowed access.
+##      </summary>
+## </param>
+## <param name="domain">
+##      <summary>
+##      User domain for the role.
+##      </summary>
+## </param>
+#
+interface(`slock_role',`
+	gen_require(`
+		attribute_role slock_roles;
+		type slock_t, slock_exec_t;
+	')
+
+	roleattribute $1 slock_roles;
+
+	domtrans_pattern($2, slock_exec_t, slock_t)
+
+	allow $2 slock_t:process { siginh rlimitinh };
+')
