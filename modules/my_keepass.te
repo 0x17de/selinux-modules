@@ -1,4 +1,4 @@
-policy_module(keepass_t,1.0.0);
+policy_module(my_keepass,1.0.0);
 
 
 require {
