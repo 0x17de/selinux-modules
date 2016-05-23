@@ -35,6 +35,7 @@ role keepass_roles types keepass_t;
 
 xserver_user_x_domain_template(keepass, keepass_t, keepass_tmpfs_t)
 
+dev_read_rand(keepass_t)
 dev_read_urand(keepass_t)
 
 manage_files_pattern(keepass_t, keepass_home_t, keepass_home_t)
@@ -72,3 +73,5 @@ dontaudit keepass_t self:fifo_file write;
 dontaudit keepass_t xauth_home_t:file write;
 dontaudit keepass_t xdg_config_home_t:file { read getattr create };
 dontaudit keepass_t xdg_data_home_t:dir search;
+
+
