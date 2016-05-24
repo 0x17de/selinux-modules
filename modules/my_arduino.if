@@ -1,0 +1,29 @@
+########################################
+## <summary>
+##      Role access for arduino.
+## </summary>
+## <param name="role">
+##      <summary>
+##      Role allowed access.
+##      </summary>
+## </param>
+## <param name="domain">
+##      <summary>
+##      User domain for the role.
+##      </summary>
+## </param>
+#
+interface(`arduino_role',`
+        gen_require(`
+                attribute_role arduino_roles;
+                type arduino_exec_t, arduino_t;
+        ')
+
+        roleattribute $1 arduino_roles;
+        domtrans_pattern($2, arduino_exec_t, arduino_t)
+	allow $2 arduino_t:process { siginh noatsecure rlimitinh };
+	read_files_pattern($2, arduino_t, arduino_t)
+	list_dirs_pattern($2, arduino_t, arduino_t)
+	read_lnk_files_pattern($2, arduino_t, arduino_t)
+')
+

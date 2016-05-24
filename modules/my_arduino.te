@@ -1,0 +1,105 @@
+policy_module(my_arduino,1.0.0);
+
+
+require {
+	type xdg_config_home_t;
+	type xdg_data_home_t;
+}
+
+########################################
+#
+# Declarations
+#
+
+type arduino_t;
+type arduino_exec_t;
+userdom_user_application_domain(arduino_t, arduino_exec_t)
+
+type arduino_tmp_t;
+userdom_user_tmp_file(arduino_tmp_t)
+
+type arduino_tmpfs_t;
+userdom_user_tmpfs_file(arduino_tmpfs_t)
+
+type arduino_home_t;
+userdom_user_home_content(arduino_home_t)
+
+
+attribute_role arduino_roles;
+role arduino_roles types arduino_t;
+
+########################################
+#
+# Local policy
+#
+
+xserver_user_x_domain_template(arduino, arduino_t, arduino_tmpfs_t)
+
+dev_read_rand(arduino_t)
+dev_read_urand(arduino_t)
+
+manage_files_pattern(arduino_t, arduino_home_t, arduino_home_t)
+manage_dirs_pattern(arduino_t, arduino_home_t, arduino_home_t)
+userdom_user_home_dir_filetrans(arduino_t, arduino_home_t, dir, ".arduino")
+xdg_config_home_filetrans(arduino_t, arduino_home_t, dir, "arduino")
+
+manage_files_pattern(arduino_t, arduino_tmp_t, arduino_tmp_t)
+manage_dirs_pattern(arduino_t, arduino_tmp_t, arduino_tmp_t)
+files_tmp_filetrans(arduino_t, arduino_tmp_t, { file dir })
+
+manage_files_pattern(arduino_t, arduino_tmpfs_t, arduino_tmpfs_t)
+manage_lnk_files_pattern(arduino_t, arduino_tmpfs_t, arduino_tmpfs_t)
+manage_fifo_files_pattern(arduino_t, arduino_tmpfs_t, arduino_tmpfs_t)
+manage_sock_files_pattern(arduino_t, arduino_tmpfs_t, arduino_tmpfs_t)
+fs_tmpfs_filetrans(arduino_t, arduino_tmpfs_t, { file lnk_file sock_file fifo_file })
+
+files_read_usr_files(arduino_t)
+miscfiles_read_localization(arduino_t)
+corecmd_search_bin(arduino_t)
+
+userdom_use_user_ptys(arduino_t)
+corecmd_exec_shell(arduino_t)
+corecmd_exec_bin(arduino_t)
+
+## unsorted
+
+allow arduino_t self:tcp_socket create_socket_perms;
+allow arduino_t self:udp_socket create_socket_perms;
+#corenet_udp_bind_howl_port(arduino_t)
+#corenet_udp_bind_generic_node(arduino_t)
+sysnet_read_config(arduino_t)
+corenet_tcp_connect_http_port(arduino_t)
+
+files_read_var_lib_files(arduino_t)
+
+allow arduino_t self:dir write;
+allow arduino_t self:file execute;
+allow arduino_t self:process { signal getsched };
+allow arduino_t self:fifo_file { read write getattr };
+allow arduino_t self:file execute_no_trans;
+java_exec(arduino_t)
+allow arduino_t self:process execmem;
+
+userdom_list_user_home_content(arduino_t)
+userdom_user_home_dir_filetrans(arduino_t, arduino_home_t, {dir file})
+
+########################################
+#
+# Don't audit
+#
+
+files_dontaudit_list_mnt(arduino_t)
+fs_dontaudit_getattr_all_fs(arduino_t)
+userdom_dontaudit_search_user_home_content(arduino_t)
+xserver_dontaudit_write_log(arduino_t)
+kernel_dontaudit_read_system_state(arduino_t)
+selinux_dontaudit_getattr_dir(arduino_t)
+
+dontaudit xserver_t arduino_t:dir search;
+dontaudit xserver_t arduino_t:file { read open };
+dontaudit arduino_t self:fifo_file write;
+dontaudit arduino_t xauth_home_t:file write;
+dontaudit arduino_t xdg_config_home_t:file { read getattr create };
+dontaudit arduino_t xdg_data_home_t:dir search;
+
+

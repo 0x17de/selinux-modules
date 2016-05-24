@@ -1,0 +1,7 @@
+/opt/arduino/arduino		--	gen_context(system_u:object_r:arduino_exec_t,s0)
+/opt/arduino(/.*)?			gen_context(system_u:object_r:arduino_t,s0)
+/opt/arduino/java/bin/java.*	--	gen_context(system_u:object_r:java_exec_t,s0)
+/opt/arduino/java/bin/.*	--	gen_context(system_u:object_r:bin_t,s0)
+/opt/arduino/java/lib(/.*)?		gen_context(system_u:object_r:lib_t,s0)
+/opt/arduino/lib(/.*)?			gen_context(system_u:object_r:lib_t,s0)
+HOME_DIR/.jssc/linux(/.*)?		gen_context(system_u:object_r:lib_t,s0)
